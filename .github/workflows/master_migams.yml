@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - migams
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to registry
+      uses: docker/login-action@v1
+      with:
+        registry: https://github.com/ever-co/ever-gauzy/
+        username: ${{ secrets.AzureAppService_ContainerUsername_a4b6e75742734ebd9b1fb67f08b1f141 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_85bbfc378607455ab483ca20f7be5199 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: github.com/ever-co/ever-gauzy/${{ secrets.AzureAppService_ContainerUsername_a4b6e75742734ebd9b1fb67f08b1f141 }}/master:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'migams'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_1b6d7543323d49a7b6369d5f285cb50f }}
+        images: 'github.com/ever-co/ever-gauzy/${{ secrets.AzureAppService_ContainerUsername_a4b6e75742734ebd9b1fb67f08b1f141 }}/master:${{ github.sha }}'
