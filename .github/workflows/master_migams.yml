@@ -22,15 +22,15 @@ jobs:
     - name: Log in to registry
       uses: docker/login-action@v1
       with:
-        registry: https://github.com/ever-co/ever-gauzy/
-        username: ${{ secrets.AzureAppService_ContainerUsername_a4b6e75742734ebd9b1fb67f08b1f141 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_85bbfc378607455ab483ca20f7be5199 }}
+        registry: https://github.com/ever-co/ever-gauzy-pulumi/
+        username: ${{ secrets.AzureAppService_ContainerUsername_6ab898de09c2455394d07ef3f936d147 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_79f843048a414eeaa2c5b8fa034b784c }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: github.com/ever-co/ever-gauzy/${{ secrets.AzureAppService_ContainerUsername_a4b6e75742734ebd9b1fb67f08b1f141 }}/master:${{ github.sha }}
+        tags: github.com/ever-co/ever-gauzy-pulumi/${{ secrets.AzureAppService_ContainerUsername_6ab898de09c2455394d07ef3f936d147 }}/master:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'migams'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_1b6d7543323d49a7b6369d5f285cb50f }}
-        images: 'github.com/ever-co/ever-gauzy/${{ secrets.AzureAppService_ContainerUsername_a4b6e75742734ebd9b1fb67f08b1f141 }}/master:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_c2e5de0fe92a4104857ca8967f60cc8a }}
+        images: 'github.com/ever-co/ever-gauzy-pulumi/${{ secrets.AzureAppService_ContainerUsername_6ab898de09c2455394d07ef3f936d147 }}/master:${{ github.sha }}'
